@@ -8,8 +8,9 @@ This project contains Terraform configurations for setting up the infrastructure
 - AWS Account and CLI configured
 - Hashicorp/aws "~> 5.0"
 - RDS secret (Username and Password) shoud be created in your AWS Secret Manager
-- S3 buket for terraform.tfstate (backend) shoud be created in your AWS Account
-- DynamoDB shoud be created in your AWS Account
+- S3 buket for terraform.tfstate (backend) shoud be created in your AWS Account (backend.tf)
+- DynamoDB shoud be created in your AWS Account (backend.tf)
+- Uncomment https listener configuration (if using HTTPS connection, elb.tf) 
 
 ## Setup Instructions
 ### Modul
@@ -30,16 +31,22 @@ module "weasel-crm-resources" {
   private_cidr2 = "10.0.2.0/24"
   private_cidr3 = "10.0.3.0/24"
 
-  ssl_cert       = ""
-  db_credentials = "weasel_crm_rds" #use your secret in AWS Secrets Manager
-  s3_bucket_name = "weasel-crm-bucket-rodent" #use name of S3 buket
+  ssl_cert       = "<your_ssl_certificate>"
+  db_credentials = "" #name of RDS secret in AWS Secrets Manager
+  s3_bucket_name = "" #name of S3 buket 
 
-  max_size         = "2"
-  min_size         = "2"
-  desired_capacity = "2"
+  max_size         = "2" #max number of instances
+  min_size         = "2" #min number of instances
+  desired_capacity = "2" #desired number of instances  
   
 }
 ```
+### Backend (backend.tf)
+```
+    bucket         = "<name_of_your_bucket>"  
+    dynamodb_table = "<name_of_your_DynamoDB>"  
+```
+
 1. **Initialize Terraform:** Run `terraform init` to initialize the working directory.
 2. **Variable Configuration:** Configure the required variables in `variable.tf`.
 3. **Deployment:** Execute `terraform apply` to deploy the infrastructure.
@@ -64,7 +71,8 @@ module "weasel-crm-resources" {
 - `resource "aws_vpc" "weasel_crm_vpc"` and related networking resources.
 
 ### Security Groups
-- `resource "aws_security_group" "weasel_crm_sg"`: Security group for EC2 instances.
+- `resource "aws_security_group" "weasel_crm_sg"`: Security group for Load Balancer.
+- `resource "aws_security_group" "weasel_crm_sg_ec2"`: Security group for EC2 instances.
 - `resource "aws_security_group" "weasel_crm_rds_sg"`: Security group for RDS.
 
 ## File Structure
@@ -87,4 +95,4 @@ After deployment, the infrastructure will support the operations of Weasel CRM w
 - Viktoriia Bielova
 
 ## Certificate
-You SSL Certificate 
+Your SSL Certificate 
