@@ -13,18 +13,6 @@ provider "aws" {
 }
 
 
-#terraform {
-#  backend "s3" {
-#    bucket         = "weasel-crm-state-bucket" #name of your bucket
-#    key            = "path/to/my/tfstate"
-#    region         = "us-east-1"
-#    dynamodb_table = "weasel-crm-dynamodb" #name of your DynamoDB
-#    encrypt        = true
-#  }
-#}
-
-
-
 ##DB
 data "aws_secretsmanager_secret" "weasel_crm_rds_credentials" {
   name = var.db_credentials
@@ -57,4 +45,13 @@ resource "aws_db_instance" "weasel_crm_rds" {
 # S3 Bucket
 resource "aws_s3_bucket" "private_bucket" {
   bucket = var.s3_bucket_name
+}
+
+resource "aws_s3_bucket_public_access_block" "private_bucket_policy" {
+  bucket = aws_s3_bucket.private_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }

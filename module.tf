@@ -15,11 +15,11 @@ module "weasel-crm-resources" {
   private_cidr3 = "10.0.3.0/24"
 
   ssl_cert       = ""
-  db_credentials = "weasel_crm_rds" #use your secret in AWS Secrets Manager
-  s3_bucket_name = "weasel-crm-bucket-rodent" #use name of S3 buket
+  db_credentials = "" #name of secret in AWS Secrets Manager
+  s3_bucket_name = "" #name of S3 buket
 
-  max_size         = "2"
-  min_size         = "2"
-  desired_capacity = "2"
+  max_size         = "2" #max number of instances
+  min_size         = "2" #min number of instances
+  desired_capacity = "2" #desired number of instances
   
 }
